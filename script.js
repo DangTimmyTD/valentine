@@ -41,11 +41,11 @@ var noBtn = document.getElementById("no-btn");
 var mainGif = document.getElementById("bubu-dudu-gif");
 var questionScreen = document.getElementById("question-screen");
 var celebrationScreen = document.getElementById("celebration-screen");
+var contentCard = document.querySelector(".content-card");
 
 // ==================== VIEWPORT HELPER ====================
 
 function getViewportSize() {
-  // Use visualViewport for accurate mobile dimensions (accounts for address bar, keyboard)
   if (window.visualViewport) {
     return {
       width: window.visualViewport.width,
@@ -61,35 +61,40 @@ function getViewportSize() {
 // ==================== NO BUTTON BEHAVIOR ====================
 
 function handleNoInteraction() {
-  // Debounce: prevent double-firing within 150ms
   var now = Date.now();
   if (now - lastInteraction < 150) return;
   lastInteraction = now;
 
   noClickCount++;
 
-  // Cycle through messages
   var msgIndex = Math.min(noClickCount, NO_BUTTON_MESSAGES.length - 1);
   noBtn.textContent = NO_BUTTON_MESSAGES[msgIndex];
 
-  // Grow the Yes button
   yesScale += 0.18;
   yesBtn.style.transform = "scale(" + Math.min(yesScale, 2.5) + ")";
 
-  // Change GIF to sad after 3 attempts
   if (noClickCount === 3) {
     mainGif.src = GIFS.sad;
   }
 
-  // Shrink No button after 6 attempts
   if (noClickCount >= 6) {
     var shrink = Math.max(0.5, 1 - (noClickCount - 5) * 0.07);
     noBtn.style.fontSize = shrink + "rem";
     noBtn.style.padding = (10 * shrink) + "px " + (28 * shrink) + "px";
   }
 
-  // Teleport!
   teleportNoButton();
+}
+
+function overlapsCard(x, y, btnW, btnH) {
+  var card = contentCard.getBoundingClientRect();
+  var margin = 10;
+  return !(
+    x + btnW < card.left - margin ||
+    x > card.right + margin ||
+    y + btnH < card.top - margin ||
+    y > card.bottom + margin
+  );
 }
 
 function teleportNoButton() {
@@ -99,15 +104,28 @@ function teleportNoButton() {
   }
 
   var viewport = getViewportSize();
-  var padding = 30; // Extra padding for mobile safe areas
+  var padding = 30;
   var btnW = noBtn.offsetWidth;
   var btnH = noBtn.offsetHeight;
 
   var maxX = viewport.width - btnW - padding;
   var maxY = viewport.height - btnH - padding;
 
-  var newX = Math.max(padding, Math.random() * maxX);
-  var newY = Math.max(padding, Math.random() * maxY);
+  // Try up to 20 times to find a position that doesn't overlap the card
+  var newX, newY;
+  var attempts = 0;
+  do {
+    newX = Math.max(padding, Math.random() * maxX);
+    newY = Math.max(padding, Math.random() * maxY);
+    attempts++;
+  } while (overlapsCard(newX, newY, btnW, btnH) && attempts < 20);
+
+  // If all attempts overlap (very small screen), place it below the card
+  if (overlapsCard(newX, newY, btnW, btnH)) {
+    var card = contentCard.getBoundingClientRect();
+    newX = Math.max(padding, Math.min(maxX, (viewport.width - btnW) / 2));
+    newY = Math.min(maxY, card.bottom + 20);
+  }
 
   noBtn.style.left = newX + "px";
   noBtn.style.top = newY + "px";
@@ -147,7 +165,6 @@ yesBtn.addEventListener("click", function () {
 // ==================== CELEBRATION ====================
 
 function launchCelebration() {
-  // Confetti burst from left
   confetti({
     particleCount: 100,
     spread: 70,
@@ -155,7 +172,6 @@ function launchCelebration() {
     colors: ["#e91e63", "#f06292", "#ff4081", "#f8bbd0", "#ff80ab"]
   });
 
-  // Confetti burst from right
   confetti({
     particleCount: 100,
     spread: 70,
@@ -163,7 +179,6 @@ function launchCelebration() {
     colors: ["#e91e63", "#f06292", "#ff4081", "#f8bbd0", "#ff80ab"]
   });
 
-  // Emoji confetti
   try {
     var jsConfetti = new JSConfetti();
     jsConfetti.addConfetti({
@@ -171,11 +186,8 @@ function launchCelebration() {
       emojiSize: 36,
       confettiNumber: 50
     });
-  } catch (e) {
-    // js-confetti not loaded, that's ok
-  }
+  } catch (e) {}
 
-  // Continuous confetti for 3 seconds
   var end = Date.now() + 3000;
   var interval = setInterval(function () {
     if (Date.now() > end) {
