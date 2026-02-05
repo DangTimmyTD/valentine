@@ -26,32 +26,32 @@ var GIFS = {
   celebration: "https://media1.tenor.com/m/ZP9TmRmovFAAAAAC/bubu-dudu.gif"
 };
 
-// Escalating sadness - Dudu (brown bear) crying GIFs with fallbacks
+// Escalating sadness - ALL Dudu (brown bear) crying GIFs
 var SAD_STAGES = [
   { at: 3,  gifs: [
     "https://media1.tenor.com/m/T9aXfHX_xn8AAAAC/dudu-crying-dudu-cute.gif",
-    "https://media1.tenor.com/m/yZoKXA08ZyYAAAAC/bubu-bubu-dudu.gif",
+    "https://media1.tenor.com/m/x1zd-DCiu3sAAAAC/dudu-cry-gif.gif",
     "https://media1.tenor.com/m/Q9VuGIKQqEMAAAAC/love-bear.gif"
   ]},
   { at: 5,  gifs: [
     "https://media1.tenor.com/m/x1zd-DCiu3sAAAAC/dudu-cry-gif.gif",
-    "https://media1.tenor.com/m/7uQ4GHysrS0AAAAC/tkthao219-bubududu.gif",
-    "https://media1.tenor.com/m/sWXhCC4A2woAAAAC/bubu-bubu-dudu.gif"
+    "https://media1.tenor.com/m/T9aXfHX_xn8AAAAC/dudu-crying-dudu-cute.gif",
+    "https://media1.tenor.com/m/b_RmNm_WKo0AAAAC/dudu-crying.gif"
   ]},
   { at: 7,  gifs: [
-    "https://media1.tenor.com/m/eU0GphP1dRoAAAAC/dudu-cry-dudu-funny.gif",
-    "https://media1.tenor.com/m/qEDqOiufxykAAAAC/tkthao219-bubududu.gif",
-    "https://media1.tenor.com/m/Mw5q8hX6NnIAAAAC/bubu-dudu-bubu.gif"
+    "https://media1.tenor.com/m/b_RmNm_WKo0AAAAC/dudu-crying.gif",
+    "https://media1.tenor.com/m/7uQ4GHysrS0AAAAC/tkthao219-bubududu.gif",
+    "https://media1.tenor.com/m/0XxZLMzjYV0AAAAC/dudu-crying-texting.gif"
   ]},
   { at: 9,  gifs: [
     "https://media1.tenor.com/m/0XxZLMzjYV0AAAAC/dudu-crying-texting.gif",
-    "https://media1.tenor.com/m/N004Ks6RWmkAAAAC/bubu-dudu.gif",
-    "https://media1.tenor.com/m/LZ6qSGcWa-UAAAAC/twitter-tears.gif"
+    "https://media1.tenor.com/m/b_RmNm_WKo0AAAAC/dudu-crying.gif",
+    "https://media1.tenor.com/m/x1zd-DCiu3sAAAAC/dudu-cry-gif.gif"
   ]},
   { at: 11, gifs: [
-    "https://media1.tenor.com/m/HUJyzO0WfM4AAAAC/bubu-dudu.gif",
-    "https://media1.tenor.com/m/9gBByPt6k4oAAAAC/bubu-dudu-twitter.gif",
-    "https://media1.tenor.com/m/fpYAztgUXloAAAAC/bubu-bubu-dudu.gif"
+    "https://media1.tenor.com/m/7uQ4GHysrS0AAAAC/tkthao219-bubududu.gif",
+    "https://media1.tenor.com/m/b_RmNm_WKo0AAAAC/dudu-crying.gif",
+    "https://media1.tenor.com/m/0XxZLMzjYV0AAAAC/dudu-crying-texting.gif"
   ]}
 ];
 
