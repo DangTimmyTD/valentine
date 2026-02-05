@@ -35,6 +35,16 @@ h1 {
   display: none !important;
 }
 
+/* ==================== NAME HEADER ==================== */
+
+.name-header {
+  font-family: 'Dancing Script', cursive;
+  color: var(--text-secondary);
+  font-size: 2.6rem;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
 /* ==================== FLOATING HEARTS ==================== */
 
 .floating-hearts-bg {
@@ -254,6 +264,10 @@ h1 {
     border-radius: 20px;
   }
 
+  .name-header {
+    font-size: 2.2rem;
+  }
+
   .main-gif {
     width: 180px;
     height: 180px;
@@ -298,6 +312,10 @@ h1 {
 @media (max-width: 380px) {
   .content-card h1 {
     font-size: 1.5rem;
+  }
+
+  .name-header {
+    font-size: 1.8rem;
   }
 
   .main-gif {

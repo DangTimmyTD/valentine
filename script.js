@@ -15,8 +15,8 @@ var NO_BUTTON_MESSAGES = [
   "With a cherry on top?",
   "Don't break my heart!",
   "I'll be sad...",
-  "Bubu will cry!",
-  "You're breaking Bubu's heart!",
+  "Dudu will cry!",
+  "You're breaking Dudu's heart!",
   "Fine, I'll ask again...",
   "Will you be my Valentine?"
 ];
@@ -26,36 +26,35 @@ var GIFS = {
   celebration: "https://media1.tenor.com/m/ZP9TmRmovFAAAAAC/bubu-dudu.gif"
 };
 
-// Escalating sadness with fallback URLs for each stage
+// Escalating sadness - Dudu (brown bear) crying GIFs with fallbacks
 var SAD_STAGES = [
   { at: 3,  gifs: [
-    "https://media1.tenor.com/m/jhjnlBLrWOMAAAAC/bubu-dudu-bubu-sad.gif",
-    "https://media1.tenor.com/m/IOWFvCCgGIQAAAAC/bubu-dudu-sad-dudu.gif",
-    "https://gifdb.com/images/high/angry-bubu-sad-dudu-4fmrrh1zxjbzdlgz.gif"
+    "https://media1.tenor.com/m/T9aXfHX_xn8AAAAC/dudu-crying-dudu-cute.gif",
+    "https://media1.tenor.com/m/yZoKXA08ZyYAAAAC/bubu-bubu-dudu.gif",
+    "https://media1.tenor.com/m/Q9VuGIKQqEMAAAAC/love-bear.gif"
   ]},
   { at: 5,  gifs: [
-    "https://media1.tenor.com/m/EKrsFntSuSgAAAAC/sad.gif",
-    "https://media1.tenor.com/m/fpYAztgUXloAAAAC/bubu-bubu-dudu.gif",
-    "https://gifdb.com/images/high/cute-sad-bubu-dudu-panda-kick-4cn5usy9xip1m59y.gif"
+    "https://media1.tenor.com/m/x1zd-DCiu3sAAAAC/dudu-cry-gif.gif",
+    "https://media1.tenor.com/m/7uQ4GHysrS0AAAAC/tkthao219-bubududu.gif",
+    "https://media1.tenor.com/m/sWXhCC4A2woAAAAC/bubu-bubu-dudu.gif"
   ]},
   { at: 7,  gifs: [
-    "https://media1.tenor.com/m/godyycspIIMAAAAC/bubu-cry-gif.gif",
-    "https://media1.tenor.com/m/Eg9AvPQstIUAAAAC/bubu-bubu-sad.gif",
-    "https://media1.tenor.com/m/LC74nzQObQ0AAAAC/bubu-dudu.gif"
+    "https://media1.tenor.com/m/eU0GphP1dRoAAAAC/dudu-cry-dudu-funny.gif",
+    "https://media1.tenor.com/m/qEDqOiufxykAAAAC/tkthao219-bubududu.gif",
+    "https://media1.tenor.com/m/Mw5q8hX6NnIAAAAC/bubu-dudu-bubu.gif"
   ]},
   { at: 9,  gifs: [
+    "https://media1.tenor.com/m/0XxZLMzjYV0AAAAC/dudu-crying-texting.gif",
     "https://media1.tenor.com/m/N004Ks6RWmkAAAAC/bubu-dudu.gif",
-    "https://media1.tenor.com/m/9gBByPt6k4oAAAAC/bubu-dudu-twitter.gif",
-    "https://media1.tenor.com/m/0Xr-5-SbieQAAAAC/bubududu-panda.gif"
+    "https://media1.tenor.com/m/LZ6qSGcWa-UAAAAC/twitter-tears.gif"
   ]},
   { at: 11, gifs: [
     "https://media1.tenor.com/m/HUJyzO0WfM4AAAAC/bubu-dudu.gif",
-    "https://media1.tenor.com/m/WRRnrnJBMWMAAAAC/bubu-miss-dudu-bubu-cry.gif",
-    "https://media1.tenor.com/m/IY1Vi7eS8ucAAAAC/twitter-sad.gif"
+    "https://media1.tenor.com/m/9gBByPt6k4oAAAAC/bubu-dudu-twitter.gif",
+    "https://media1.tenor.com/m/fpYAztgUXloAAAAC/bubu-bubu-dudu.gif"
   ]}
 ];
 
-// Track which GIF loaded for each stage
 var stageLoaded = {};
 
 // ==================== STATE ====================
@@ -101,7 +100,7 @@ function loadStageGif(stageIndex) {
   var tryIndex = 0;
 
   function tryNext() {
-    if (tryIndex >= gifList.length) return; // All failed, keep current
+    if (tryIndex >= gifList.length) return;
     var url = gifList[tryIndex];
 
     var testImg = new Image();
@@ -116,7 +115,6 @@ function loadStageGif(stageIndex) {
     testImg.src = url;
   }
 
-  // If we already know a working URL for this stage, use it directly
   if (stageLoaded[stageIndex]) {
     mainGif.src = stageLoaded[stageIndex];
   } else {
@@ -294,7 +292,6 @@ function createFloatingHearts() {
 
 function preloadImages() {
   var allUrls = Object.values(GIFS);
-  // Preload first URL from each sad stage
   for (var i = 0; i < SAD_STAGES.length; i++) {
     allUrls.push(SAD_STAGES[i].gifs[0]);
   }
