@@ -26,14 +26,37 @@ var GIFS = {
   celebration: "https://media1.tenor.com/m/ZP9TmRmovFAAAAAC/bubu-dudu.gif"
 };
 
-// Escalating sadness: sad -> crying -> more crying -> ugly crying -> devastated
+// Escalating sadness with fallback URLs for each stage
 var SAD_STAGES = [
-  { at: 3,  gif: "https://media1.tenor.com/m/hzbQakIKSooAAAAC/heart-broken-sad.gif" },       // Broken heart - mildly sad
-  { at: 5,  gif: "https://media1.tenor.com/m/sWXhCC4A2woAAAAC/bubu-bubu-dudu.gif" },          // Tears streaming
-  { at: 7,  gif: "https://media1.tenor.com/m/godyycspIIMAAAAC/bubu-cry-gif.gif" },             // Full on crying
-  { at: 9,  gif: "https://media1.tenor.com/m/p3wTssf4xRgAAAAC/bubu-bubu-sad.gif" },           // Sitting against wall crying
-  { at: 11, gif: "https://media1.tenor.com/m/HUJyzO0WfM4AAAAC/bubu-dudu.gif" }                // Ugly crying - tears everywhere
+  { at: 3,  gifs: [
+    "https://media1.tenor.com/m/jhjnlBLrWOMAAAAC/bubu-dudu-bubu-sad.gif",
+    "https://media1.tenor.com/m/IOWFvCCgGIQAAAAC/bubu-dudu-sad-dudu.gif",
+    "https://gifdb.com/images/high/angry-bubu-sad-dudu-4fmrrh1zxjbzdlgz.gif"
+  ]},
+  { at: 5,  gifs: [
+    "https://media1.tenor.com/m/EKrsFntSuSgAAAAC/sad.gif",
+    "https://media1.tenor.com/m/fpYAztgUXloAAAAC/bubu-bubu-dudu.gif",
+    "https://gifdb.com/images/high/cute-sad-bubu-dudu-panda-kick-4cn5usy9xip1m59y.gif"
+  ]},
+  { at: 7,  gifs: [
+    "https://media1.tenor.com/m/godyycspIIMAAAAC/bubu-cry-gif.gif",
+    "https://media1.tenor.com/m/Eg9AvPQstIUAAAAC/bubu-bubu-sad.gif",
+    "https://media1.tenor.com/m/LC74nzQObQ0AAAAC/bubu-dudu.gif"
+  ]},
+  { at: 9,  gifs: [
+    "https://media1.tenor.com/m/N004Ks6RWmkAAAAC/bubu-dudu.gif",
+    "https://media1.tenor.com/m/9gBByPt6k4oAAAAC/bubu-dudu-twitter.gif",
+    "https://media1.tenor.com/m/0Xr-5-SbieQAAAAC/bubududu-panda.gif"
+  ]},
+  { at: 11, gifs: [
+    "https://media1.tenor.com/m/HUJyzO0WfM4AAAAC/bubu-dudu.gif",
+    "https://media1.tenor.com/m/WRRnrnJBMWMAAAAC/bubu-miss-dudu-bubu-cry.gif",
+    "https://media1.tenor.com/m/IY1Vi7eS8ucAAAAC/twitter-sad.gif"
+  ]}
 ];
+
+// Track which GIF loaded for each stage
+var stageLoaded = {};
 
 // ==================== STATE ====================
 
@@ -41,6 +64,7 @@ var noClickCount = 0;
 var yesScale = 1;
 var hasEscaped = false;
 var lastInteraction = 0;
+var currentStage = -1;
 
 // ==================== ELEMENTS ====================
 
@@ -66,6 +90,40 @@ function getViewportSize() {
   };
 }
 
+// ==================== GIF LOADING WITH FALLBACK ====================
+
+function loadStageGif(stageIndex) {
+  if (stageIndex === currentStage) return;
+  currentStage = stageIndex;
+
+  var stage = SAD_STAGES[stageIndex];
+  var gifList = stage.gifs;
+  var tryIndex = 0;
+
+  function tryNext() {
+    if (tryIndex >= gifList.length) return; // All failed, keep current
+    var url = gifList[tryIndex];
+
+    var testImg = new Image();
+    testImg.onload = function () {
+      mainGif.src = url;
+      stageLoaded[stageIndex] = url;
+    };
+    testImg.onerror = function () {
+      tryIndex++;
+      tryNext();
+    };
+    testImg.src = url;
+  }
+
+  // If we already know a working URL for this stage, use it directly
+  if (stageLoaded[stageIndex]) {
+    mainGif.src = stageLoaded[stageIndex];
+  } else {
+    tryNext();
+  }
+}
+
 // ==================== NO BUTTON BEHAVIOR ====================
 
 function handleNoInteraction() {
@@ -84,7 +142,7 @@ function handleNoInteraction() {
   // Escalate through sad GIF stages
   for (var i = SAD_STAGES.length - 1; i >= 0; i--) {
     if (noClickCount >= SAD_STAGES[i].at) {
-      mainGif.src = SAD_STAGES[i].gif;
+      loadStageGif(i);
       break;
     }
   }
@@ -235,10 +293,10 @@ function createFloatingHearts() {
 // ==================== PRELOAD IMAGES ====================
 
 function preloadImages() {
-  // Preload all GIFs including sad stages
   var allUrls = Object.values(GIFS);
+  // Preload first URL from each sad stage
   for (var i = 0; i < SAD_STAGES.length; i++) {
-    allUrls.push(SAD_STAGES[i].gif);
+    allUrls.push(SAD_STAGES[i].gifs[0]);
   }
   allUrls.forEach(function (url) {
     var img = new Image();
