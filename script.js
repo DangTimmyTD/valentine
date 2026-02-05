@@ -23,9 +23,17 @@ var NO_BUTTON_MESSAGES = [
 
 var GIFS = {
   asking: "https://media1.tenor.com/m/0cNM_9li440AAAAC/dudu-giving-flowers-bubu-flowers.gif",
-  sad: "https://media1.tenor.com/m/sWXhCC4A2woAAAAC/bubu-bubu-dudu.gif",
   celebration: "https://media1.tenor.com/m/ZP9TmRmovFAAAAAC/bubu-dudu.gif"
 };
+
+// Escalating sadness: sad -> crying -> more crying -> ugly crying -> devastated
+var SAD_STAGES = [
+  { at: 3,  gif: "https://media1.tenor.com/m/hzbQakIKSooAAAAC/heart-broken-sad.gif" },       // Broken heart - mildly sad
+  { at: 5,  gif: "https://media1.tenor.com/m/sWXhCC4A2woAAAAC/bubu-bubu-dudu.gif" },          // Tears streaming
+  { at: 7,  gif: "https://media1.tenor.com/m/godyycspIIMAAAAC/bubu-cry-gif.gif" },             // Full on crying
+  { at: 9,  gif: "https://media1.tenor.com/m/p3wTssf4xRgAAAAC/bubu-bubu-sad.gif" },           // Sitting against wall crying
+  { at: 11, gif: "https://media1.tenor.com/m/HUJyzO0WfM4AAAAC/bubu-dudu.gif" }                // Ugly crying - tears everywhere
+];
 
 // ==================== STATE ====================
 
@@ -73,8 +81,12 @@ function handleNoInteraction() {
   yesScale += 0.18;
   yesBtn.style.transform = "scale(" + Math.min(yesScale, 2.5) + ")";
 
-  if (noClickCount === 3) {
-    mainGif.src = GIFS.sad;
+  // Escalate through sad GIF stages
+  for (var i = SAD_STAGES.length - 1; i >= 0; i--) {
+    if (noClickCount >= SAD_STAGES[i].at) {
+      mainGif.src = SAD_STAGES[i].gif;
+      break;
+    }
   }
 
   if (noClickCount >= 6) {
@@ -111,7 +123,6 @@ function teleportNoButton() {
   var maxX = viewport.width - btnW - padding;
   var maxY = viewport.height - btnH - padding;
 
-  // Try up to 20 times to find a position that doesn't overlap the card
   var newX, newY;
   var attempts = 0;
   do {
@@ -120,7 +131,6 @@ function teleportNoButton() {
     attempts++;
   } while (overlapsCard(newX, newY, btnW, btnH) && attempts < 20);
 
-  // If all attempts overlap (very small screen), place it below the card
   if (overlapsCard(newX, newY, btnW, btnH)) {
     var card = contentCard.getBoundingClientRect();
     newX = Math.max(padding, Math.min(maxX, (viewport.width - btnW) / 2));
@@ -225,7 +235,12 @@ function createFloatingHearts() {
 // ==================== PRELOAD IMAGES ====================
 
 function preloadImages() {
-  Object.values(GIFS).forEach(function (url) {
+  // Preload all GIFs including sad stages
+  var allUrls = Object.values(GIFS);
+  for (var i = 0; i < SAD_STAGES.length; i++) {
+    allUrls.push(SAD_STAGES[i].gif);
+  }
+  allUrls.forEach(function (url) {
     var img = new Image();
     img.src = url;
   });
