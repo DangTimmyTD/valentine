@@ -1,6 +1,6 @@
 // ==================== CONFIGURATION ====================
 
-const NO_BUTTON_MESSAGES = [
+var NO_BUTTON_MESSAGES = [
   "No",
   "Are you sure?",
   "Really sure?",
@@ -21,33 +21,55 @@ const NO_BUTTON_MESSAGES = [
   "Will you be my Valentine?"
 ];
 
-const GIFS = {
+var GIFS = {
   asking: "https://media1.tenor.com/m/0cNM_9li440AAAAC/dudu-giving-flowers-bubu-flowers.gif",
   sad: "https://media1.tenor.com/m/sWXhCC4A2woAAAAC/bubu-bubu-dudu.gif",
-  celebration: "https://media1.tenor.com/m/LgR_6-nkvnUAAAAC/casal-dudu.gif"
+  celebration: "https://media1.tenor.com/m/ZP9TmRmovFAAAAAC/bubu-dudu.gif"
 };
 
 // ==================== STATE ====================
 
-let noClickCount = 0;
-let yesScale = 1;
-let hasEscaped = false;
+var noClickCount = 0;
+var yesScale = 1;
+var hasEscaped = false;
+var lastInteraction = 0;
 
 // ==================== ELEMENTS ====================
 
-const yesBtn = document.getElementById("yes-btn");
-const noBtn = document.getElementById("no-btn");
-const mainGif = document.getElementById("bubu-dudu-gif");
-const questionScreen = document.getElementById("question-screen");
-const celebrationScreen = document.getElementById("celebration-screen");
+var yesBtn = document.getElementById("yes-btn");
+var noBtn = document.getElementById("no-btn");
+var mainGif = document.getElementById("bubu-dudu-gif");
+var questionScreen = document.getElementById("question-screen");
+var celebrationScreen = document.getElementById("celebration-screen");
+
+// ==================== VIEWPORT HELPER ====================
+
+function getViewportSize() {
+  // Use visualViewport for accurate mobile dimensions (accounts for address bar, keyboard)
+  if (window.visualViewport) {
+    return {
+      width: window.visualViewport.width,
+      height: window.visualViewport.height
+    };
+  }
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+}
 
 // ==================== NO BUTTON BEHAVIOR ====================
 
 function handleNoInteraction() {
+  // Debounce: prevent double-firing within 150ms
+  var now = Date.now();
+  if (now - lastInteraction < 150) return;
+  lastInteraction = now;
+
   noClickCount++;
 
   // Cycle through messages
-  const msgIndex = Math.min(noClickCount, NO_BUTTON_MESSAGES.length - 1);
+  var msgIndex = Math.min(noClickCount, NO_BUTTON_MESSAGES.length - 1);
   noBtn.textContent = NO_BUTTON_MESSAGES[msgIndex];
 
   // Grow the Yes button
@@ -61,7 +83,7 @@ function handleNoInteraction() {
 
   // Shrink No button after 6 attempts
   if (noClickCount >= 6) {
-    const shrink = Math.max(0.5, 1 - (noClickCount - 5) * 0.07);
+    var shrink = Math.max(0.5, 1 - (noClickCount - 5) * 0.07);
     noBtn.style.fontSize = shrink + "rem";
     noBtn.style.padding = (10 * shrink) + "px " + (28 * shrink) + "px";
   }
@@ -76,15 +98,16 @@ function teleportNoButton() {
     noBtn.classList.add("escaped");
   }
 
-  const padding = 20;
-  const btnW = noBtn.offsetWidth;
-  const btnH = noBtn.offsetHeight;
+  var viewport = getViewportSize();
+  var padding = 30; // Extra padding for mobile safe areas
+  var btnW = noBtn.offsetWidth;
+  var btnH = noBtn.offsetHeight;
 
-  const maxX = window.innerWidth - btnW - padding;
-  const maxY = window.innerHeight - btnH - padding;
+  var maxX = viewport.width - btnW - padding;
+  var maxY = viewport.height - btnH - padding;
 
-  const newX = Math.max(padding, Math.random() * maxX);
-  const newY = Math.max(padding, Math.random() * maxY);
+  var newX = Math.max(padding, Math.random() * maxX);
+  var newY = Math.max(padding, Math.random() * maxY);
 
   noBtn.style.left = newX + "px";
   noBtn.style.top = newY + "px";
@@ -95,8 +118,14 @@ noBtn.addEventListener("mouseenter", function () {
   handleNoInteraction();
 });
 
-// Mobile: flee on touch
+// Mobile: flee on touch start
 noBtn.addEventListener("touchstart", function (e) {
+  e.preventDefault();
+  handleNoInteraction();
+}, { passive: false });
+
+// Mobile: also flee if they try to drag onto it
+noBtn.addEventListener("touchmove", function (e) {
   e.preventDefault();
   handleNoInteraction();
 }, { passive: false });
